@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SHS Learn – Maths • Physics • Chemistry • Biology</title>
+<meta name="description" content="Master SHS Mathematics, Physics, Chemistry & Biology with structured lessons, interactive quizzes, and study tools designed for Ghana Education Service curriculum.">
+<meta name="keywords" content="SHS, Ghana Education Service, Mathematics, Physics, Chemistry, Biology, study, quiz, timer">
+<style>
+  :root{
+    --bg:#0b1220; --card:#121a2d; --muted:#9fb3c8; --text:#e8f1ff; --brand:#56ccf2;
+    --grad-a:linear-gradient(135deg,#1e3c72 0%, #2a5298 100%);
+    --grad-b:linear-gradient(135deg,#5b247a 0%, #1bcedf 100%);
+    --grad-c:linear-gradient(135deg,#11998e 0%, #38ef7d 100%);
+    --grad-d:linear-gradient(135deg,#f7971e 0%, #ffd200 100%);
+    --grad-e:linear-gradient(135deg,#ff512f 0%, #dd2476 100%);
+    --ring:#ffcb2e; --danger:#ff4d4f; --ok:#3bd16f;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+    --radius:18px;
+  }
+  
+  [data-theme="light"] {
+    --bg:#f8fafc; --card:#ffffff; --muted:#64748b; --text:#1e293b; --brand:#3b82f6;
+    --grad-a:linear-gradient(135deg,#3b82f6 0%, #1d4ed8 100%);
+    --grad-b:linear-gradient(135deg,#8b5cf6 0%, #3b82f6 100%);
+    --grad-c:linear-gradient(135deg,#10b981 0%, #059669 100%);
+    --grad-d:linear-gradient(135deg,#f59e0b 0%, #d97706 100%);
+    --grad-e:linear-gradient(135deg,#ef4444 0%, #dc2626 100%);
+    --ring:#f59e0b; --danger:#ef4444; --ok:#10b981;
+    --shadow: 0 10px 30px rgba(0,0,0,.1);
+  }
+  
+  [data-theme="light"] body {
+    background: radial-gradient(1200px 800px at 10% -10%,#e2e8f0 0%,transparent 60%), var(--bg);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:radial-gradient(1200px 800px at 10% -10%,#213050 0%,transparent 60%) , var(--bg); color:var(--text); font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+  a{color:inherit;text-decoration:none}
+  button{cursor:pointer}
+
+  /* Header */
+  .nav{position:sticky;top:0;z-index:20;backdrop-filter: blur(8px);
+       background:rgba(13,19,36,.7);border-bottom:1px solid rgba(255,255,255,.08)}
+  .nav-inner{max-width:1200px;margin:auto;display:flex;gap:16px;align-items:center;justify-content:space-between;padding:14px 18px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.3px}
+  .logo-badge{width:34px;height:34px;border-radius:10px;background:var(--grad-b);display:grid;place-items:center;box-shadow:var(--shadow)}
+  .nav-links{display:flex;gap:16px;flex-wrap:wrap}
+  .chip{padding:8px 12px;border-radius:999px;background:#1a2541;color:#cfe2ff;border:1px solid rgba(255,255,255,.1)}
+  .chip.active{background:var(--brand);color:#02243a}
+
+  /* Layout */
+  .wrap{max-width:1200px;margin:24px auto;padding:0 16px}
+  .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center}
+  .hero-card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow)}
+  .title{font-size:clamp(26px,4vw,42px);line-height:1.15;margin:0 0 8px}
+  .subtitle{color:var(--muted);margin:0 0 16px}
+  .subject-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:18px}
+  .subject-card{position:relative;overflow:hidden;border-radius:16px;padding:16px;height:150px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
+  .subject-card h3{margin:0}
+  .subject-card .go{align-self:flex-start;padding:8px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.15)}
+  .badge{font-size:12px;opacity:.9}
+  .grad-maths{background:var(--grad-d)}
+  .grad-physics{background:var(--grad-a)}
+  .grad-chem{background:var(--grad-e)}
+  .grad-bio{background:var(--grad-c)}
+
+  /* Main panel */
+  .panel{margin-top:18px;display:grid;grid-template-columns:320px 1fr;gap:18px}
+  .col{background:var(--card);border-radius:var(--radius);border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);padding:18px}
+  .col h2{margin:0 0 8px}
+  .muted{color:var(--muted);font-size:14px}
+
+  /* Topics list */
+  .topic{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#0f1729;margin-bottom:12px}
+  .topic.locked{opacity:.85;background:linear-gradient(90deg,#111a30, #0f1729)}
+  .tag{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05)}
+  .btn{padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--text)}
+  .btn.primary{background:var(--brand);color:#072233;border:0}
+  .btn.danger{background:var(--danger);border:0}
+  .btn.ok{background:var(--ok);border:0;color:#062b18}
+
+  /* Timer */
+  .timer{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+  .timer input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#0e1630;color:var(--text);text-align:center;font-size:16px}
+  .timeface{font-variant-numeric:tabular-nums;font-size:36px;letter-spacing:1px;background:linear-gradient(90deg,#122042,#0d1630);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center}
+  .ringing{outline:3px solid var(--ring);box-shadow:0 0 0 6px rgba(255,203,46,.2)}
+
+  /* Quiz */
+  .quiz-title{margin:10px 0 4px}
+  .q{margin:12px 0;padding:12px;border-radius:10px;background:#0f1a32;border:1px solid rgba(255,255,255,.08)}
+  .opt{display:block;margin:8px 0;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);cursor:pointer}
+  .opt.correct{border-color:#36d77d;background:rgba(54,215,125,.12)}
+  .opt.wrong{border-color:#ff6b6e;background:rgba(255,107,110,.12)}
+  .score{margin-top:8px;font-weight:700}
+
+  /* Modal */
+  .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(4,8,16,.65);z-index:50}
+  .modal.active{display:grid}
+  .modal-card{width:min(520px,92vw);background:#0f1729;border:1px solid rgba(255,255,255,.12);border-radius:16px;box-shadow:var(--shadow);padding:18px}
+
+  /* Footer */
+  .footer{opacity:.8;text-align:center;margin:30px 0 18px}
+
+  /* Progress indicators */
+  .progress-bar{width:100%;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;margin:8px 0}
+  .progress-fill{height:100%;background:var(--grad-c);transition:width 0.3s ease;border-radius:3px}
+  .progress-text{font-size:12px;color:var(--muted);margin-top:4px}
+  
+  /* Search */
+  .search-container{position:relative;margin:16px 0}
+  .search-input{width:100%;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:var(--card);color:var(--text);font-size:14px}
+  .search-input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 2px rgba(86,204,242,.2)}
+  .search-results{position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid rgba(255,255,255,.15);border-radius:12px;margin-top:4px;max-height:300px;overflow-y:auto;z-index:10;display:none}
+  .search-item{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer;transition:background 0.2s}
+  .search-item:hover{background:rgba(255,255,255,.05)}
+  .search-item:last-child{border-bottom:none}
+  
+  /* Theme toggle */
+  .theme-toggle{position:fixed;top:20px;right:20px;z-index:30;width:50px;height:50px;border-radius:50%;background:var(--card);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s;box-shadow:var(--shadow)}
+  .theme-toggle:hover{transform:scale(1.1)}
+  
+  /* Notifications */
+  .notification{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:16px 20px;box-shadow:var(--shadow);z-index:40;opacity:0;transition:all 0.3s;max-width:400px}
+  .notification.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .notification.success{border-left:4px solid var(--ok)}
+  .notification.info{border-left:4px solid var(--brand)}
+  .notification.warning{border-left:4px solid var(--ring)}
+  
+  /* Loading states */
+  .loading{opacity:0.6;pointer-events:none;position:relative}
+  .loading::after{content:'';position:absolute;top:50%;left:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border:2px solid rgba(255,255,255,.3);border-top:2px solid var(--brand);border-radius:50%;animation:spin 1s linear infinite}
+  @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+  
+  /* Enhanced focus states */
+  .chip:focus, .btn:focus, .opt:focus{outline:2px solid var(--brand);outline-offset:2px}
+  .subject-card:focus{outline:2px solid var(--brand);outline-offset:2px}
+  
+  /* Improved mobile touch targets */
+  @media (max-width: 768px){
+    .btn, .chip, .opt{min-height:44px;min-width:44px}
+    .subject-card{min-height:120px}
+    .nav-links{gap:8px}
+  }
+
+  /* Responsive */
+  @media (max-width: 980px){
+    .hero{grid-template-columns:1fr}
+    .panel{grid-template-columns:1fr}
+    .subject-grid{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width: 520px){
+    .subject-grid{grid-template-columns:1fr}
+    .theme-toggle{top:10px;right:10px;width:40px;height:40px}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-badge" aria-hidden="true">📘</div>
+      <div>SHS Learn</div>
+    </div>
+    <div class="nav-links" role="tablist">
+      <span class="chip active" id="nav-home" role="tab" aria-selected="true" tabindex="0">Home</span>
+      <span class="chip" id="nav-maths" role="tab" aria-selected="false" tabindex="0">Maths</span>
+      <span class="chip" id="nav-physics" role="tab" aria-selected="false" tabindex="0">Physics</span>
+      <span class="chip" id="nav-chemistry" role="tab" aria-selected="false" tabindex="0">Chemistry</span>
+      <span class="chip" id="nav-biology" role="tab" aria-selected="false" tabindex="0">Biology</span>
+    </div>
+  </div>
+</nav>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Switch between light and dark mode">
+  <span id="themeIcon">🌙</span>
+</button>
+
+<div class="wrap">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-card">
+      <h1 class="title">Master SHS Maths, Physics, Chemistry & Biology</h1>
+      <p class="subtitle">Built for Ghana Education Service (SHS) learners — structured topics, quizzes after each lesson, a focused study timer, and premium modules you can unlock.</p>
+      <div class="subject-grid">
+        <div class="subject-card grad-maths">
+          <div class="badge">Mathematics</div>
+          <h3>Core & Elective</h3>
+          <button class="go" data-subject="maths">Enter →</button>
+        </div>
+        <div class="subject-card grad-physics">
+          <div class="badge">Physics</div>
+          <h3>Mechanics • Waves • E&M</h3>
+          <button class="go" data-subject="physics">Enter →</button>
+        </div>
+        <div class="subject-card grad-chem">
+          <div class="badge">Chemistry</div>
+          <h3>Stoichiometry • Organic</h3>
+          <button class="go" data-subject="chemistry">Enter →</button>
+        </div>
+        <div class="subject-card grad-bio">
+          <div class="badge">Biology</div>
+          <h3>Cells • Genetics • Ecology</h3>
+          <button class="go" data-subject="biology">Enter →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STUDY TIMER -->
+    <div class="hero-card">
+      <h2>Study Timer ⏱️</h2>
+      <p class="muted">Set a focus interval. We’ll ring when time's up.</p>
+      <div class="timeface" id="timeface">25:00</div>
+      <div class="timer">
+        <input id="min" type="number" min="0" value="25" />
+        <input id="sec" type="number" min="0" max="59" value="0" />
+        <button class="btn primary" id="start">Start</button>
+        <button class="btn" id="pause">Pause</button>
+      </div>
+      <div class="timer" style="grid-template-columns:repeat(2,1fr);margin-top:8px">
+        <button class="btn" id="reset">Reset</button>
+        <button class="btn danger" id="stop">Stop</button>
+      </div>
+      <p class="muted" style="margin-top:8px">Tip: try 25–30 mins work + 5 mins break.</p>
+    </div>
+  </section>
+
+  <!-- SUBJECT PANEL -->
+  <section id="subjectPanel" class="panel" style="display:none">
+    <!-- LEFT: topic list & payment -->
+    <div class="col">
+      <h2 id="subjectTitle">Subject</h2>
+      <p class="muted">Select a topic. Premium items show a lock and can be unlocked.</p>
+      
+      <!-- Progress Overview -->
+      <div class="progress-bar">
+        <div class="progress-fill" id="subjectProgress" style="width: 0%"></div>
+      </div>
+      <div class="progress-text" id="progressText">0% Complete</div>
+      
+      <!-- Search -->
+      <div class="search-container">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search topics..." aria-label="Search topics">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      
+      <div id="topicList"></div>
+    </div>
+
+    <!-- RIGHT: lesson & quiz -->
+    <div class="col">
+      <h2 id="topicHeading">Topic</h2>
+      <div id="lesson" class="muted">Choose a topic on the left to load notes and a quiz.</div>
+      <hr style="border-color:rgba(255,255,255,.08);margin:16px 0">
+      <h3 class="quiz-title">Quick Quiz</h3>
+      <div id="quiz"></div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn primary" id="submitQuiz" disabled>Submit Quiz</button>
+        <button class="btn" id="retryQuiz" disabled>Retry</button>
+        <button class="btn" id="showHints" style="display:none">Show Hints</button>
+      </div>
+      <div class="score" id="scoreBox"></div>
+      <div id="quizExplanations" style="margin-top:16px;display:none"></div>
+    </div>
+  </section>
+
+  <div class="footer">© 2025 SHS Learn • Progress saved locally on your device.</div>
+</div>
+
+<!-- Notification Container -->
+<div id="notificationContainer"></div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal" id="payModal" aria-hidden="true">
+  <div class="modal-card">
+    <h2>Unlock Topic</h2>
+    <p class="muted" id="paymentTopicLine">You are unlocking: —</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 14px">
+      <button class="btn">Card</button>
+      <button class="btn">Mobile Money</button>
+      <button class="btn">PayPal</button>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="tag" id="priceTag">$3.00</div>
+      <button class="btn ok" id="confirmPay">Complete Payment (Demo)</button>
+      <button class="btn" id="cancelPay">Cancel</button>
+    </div>
+    <p class="muted" style="margin-top:8px">Demo only: no real charge. Unlock is saved to your browser.</p>
+  </div>
+</div>
+
+<script>
+/* --------- Data (GES SHS-aligned topics – compact set) --------- */
+const curriculum = {
+  maths: {
+    name: "Mathematics",
+    color: "grad-maths",
+    topics: [
+      t("algebra", "Algebra & Linear Equations", true,  "Forming/solving linear equations, inequalities, word problems."),
+      t("functions", "Functions & Graphs", true, "Domain/range, transformations, linear/quadratic graphs."),
+      t("trig", "Trigonometry (SHS Core)", false, "Ratios, identities, bearings, heights & distances.", 3),
+      t("calculus", "Intro to Differentiation", false, "First principles, basic rules, applications to rates/turning points.", 3),
+      t("stats", "Statistics & Probability", true, "Grouped data, mean/median/mode, probability rules."),
+      t("vectors", "Vectors & Transformations", false, "Vector addition/resolution, matrices basics.", 2.5)
+    ]
+  },
+  physics: {
+    name: "Physics",
+    color: "grad-physics",
+    topics: [
+      t("mechanics", "Mechanics: Motion & Forces", true, "Kinematics, Newton’s laws, momentum, energy."),
+      t("waves", "Waves & Sound", true, "Wave properties, superposition, sound and resonance."),
+      t("electricity", "Electricity & DC Circuits", false, "Ohm’s law, series/parallel, power, internal resistance.", 3),
+      t("fields", "Fields: Gravitation & E/M", false, "Field strength, potential, Coulomb’s law.", 3),
+      t("thermal", "Thermal Physics", true, "Temperature, heat capacity, phase changes, ideal gases.")
+    ]
+  },
+  chemistry: {
+    name: "Chemistry",
+    color: "grad-chem",
+    topics: [
+      t("atomic", "Atomic Structure & Periodicity", true, "Subatomic particles, electron configs, periodic trends."),
+      t("stoich", "Stoichiometry", true, "Mole concept, equations, limiting reagents."),
+      t("bonding", "Bonding & Structure", false, "Ionic/covalent/metallic, IMFs, properties.", 2.5),
+      t("acids", "Acids, Bases & Salts", true, "pH scale, neutralization, titration basics."),
+      t("organic", "Intro to Organic Chemistry", false, "Hydrocarbons, isomerism, reactions.", 3)
+    ]
+  },
+  biology: {
+    name: "Biology",
+    color: "grad-bio",
+    topics: [
+      t("cells", "Cell Structure & Function", true, "Organelles, microscopy, cell transport."),
+      t("genetics", "Genetics & Inheritance", true, "DNA, genes, monohybrid crosses, variation."),
+      t("systems", "Human Body Systems", false, "Circulatory, respiratory, digestive—functions & homeostasis.", 2.5),
+      t("ecology", "Ecology & Ecosystems", true, "Food chains, energy flow, biomes, conservation."),
+      t("evolution", "Evolution & Adaptation", false, "Natural selection, speciation, evidence.", 2.5)
+    ]
+  }
+};
+
+function t(id, title, free, blurb, price=3){
+  return { id, title, free, blurb, price, quiz: sampleQuiz(id) }
+}
+
+/* --------- Local Storage helpers --------- */
+const LS_UNLOCK = "shs_unlocks_v1";
+const LS_SCORE = "shs_best_scores_v1";
+const getUnlocks = () => JSON.parse(localStorage.getItem(LS_UNLOCK) || "{}");
+const setUnlocks = (obj) => localStorage.setItem(LS_UNLOCK, JSON.stringify(obj));
+const getScores = () => JSON.parse(localStorage.getItem(LS_SCORE) || "{}");
+const setScores = (obj) => localStorage.setItem(LS_SCORE, JSON.stringify(obj));
+
+/* --------- Timer --------- */
+let timer = { remaining: 1500, interval: null, running:false };
+const face = document.getElementById("timeface");
+const inMin = document.getElementById("min");
+const inSec = document.getElementById("sec");
+const btnStart = document.getElementById("start");
+const btnPause = document.getElementById("pause");
+const btnReset = document.getElementById("reset");
+const btnStop = document.getElementById("stop");
+
+function updateFace(){
+  const m = Math.floor(timer.remaining/60).toString().padStart(2,"0");
+  const s = (timer.remaining%60).toString().padStart(2,"0");
+  face.textContent = `${m}:${s}`;
+}
+function startTimer(){
+  if(timer.running) return;
+  timer.running = true;
+  face.classList.remove("ringing");
+  timer.interval = setInterval(()=>{
+    timer.remaining--;
+    updateFace();
+    if(timer.remaining<=0){
+      stopTimer(true);
+      ringAlarm();
+    }
+  },1000);
+}
+function pauseTimer(){
+  if(!timer.running) return;
+  timer.running=false;
+  clearInterval(timer.interval);
+}
+function resetTimer(){
+  pauseTimer();
+  timer.remaining = (+inMin.value||0)*60 + (+inSec.value||0);
+  updateFace();
+}
+function stopTimer(fromZero=false){
+  clearInterval(timer.interval);
+  timer.running=false;
+  if(fromZero){ timer.remaining = 0; updateFace(); face.classList.add("ringing"); }
+}
+btnStart.onclick=()=>{ if(!timer.running){ resetTimer(); startTimer(); }};
+btnPause.onclick=pauseTimer;
+btnReset.onclick=resetTimer;
+btnStop.onclick=()=>{ pauseTimer(); face.classList.remove("ringing"); };
+
+function ringAlarm(){
+  // Web Audio API beep sequence (works after any user interaction)
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type="sine"; osc.frequency.setValueAtTime(880, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.6, now+0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now+1.2);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now); osc.stop(now+1.25);
+    // second chirp
+    const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
+    o2.type="triangle"; o2.frequency.setValueAtTime(660, now+1.3);
+    g2.gain.setValueAtTime(0.0001, now+1.3);
+    g2.gain.exponentialRampToValueAtTime(0.6, now+1.31);
+    g2.gain.exponentialRampToValueAtTime(0.0001, now+2.3);
+    o2.connect(g2).connect(ctx.destination);
+    o2.start(now+1.3); o2.stop(now+2.32);
+  }catch(e){ console.log("Audio not allowed until user gesture."); }
+}
+
+/* --------- UI State --------- */
+const chips = {
+  home: document.getElementById("nav-home"),
+  maths: document.getElementById("nav-maths"),
+  physics: document.getElementById("nav-physics"),
+  chemistry: document.getElementById("nav-chemistry"),
+  biology: document.getElementById("nav-biology"),
+};
+const subjectPanel = document.getElementById("subjectPanel");
+const subjectTitle = document.getElementById("subjectTitle");
+const topicList = document.getElementById("topicList");
+const topicHeading = document.getElementById("topicHeading");
+const lesson = document.getElementById("lesson");
+const quizBox = document.getElementById("quiz");
+const submitQuizBtn = document.getElementById("submitQuiz");
+const retryQuizBtn = document.getElementById("retryQuiz");
+const scoreBox = document.getElementById("scoreBox");
+
+let currentSubjectKey = null;
+let currentTopic = null;
+let currentSelections = {};
+
+/* Home subject buttons */
+document.querySelectorAll(".go").forEach(btn=>{
+  btn.addEventListener("click", ()=>openSubject(btn.dataset.subject));
+});
+
+/* Nav */
+Object.entries(chips).forEach(([key,el])=>{
+  el.addEventListener("click", ()=>{
+    document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+    if(key==="home"){
+      el.classList.add("active");
+      subjectPanel.style.display="none";
+      window.scrollTo({top:0,behavior:"smooth"});
+      return;
+    }
+    el.classList.add("active");
+    openSubject(key);
+  });
+});
+
+function openSubject(key){
+  currentSubjectKey = key;
+  const sub = curriculum[key];
+  subjectTitle.textContent = sub.name;
+  renderTopics();
+  subjectPanel.style.display="grid";
+  topicHeading.textContent = "Topic";
+  lesson.innerHTML = `<p class="muted">Select a topic to view SHS-aligned notes and a quick quiz.</p>`;
+  quizBox.innerHTML = ""; submitQuizBtn.disabled = true; retryQuizBtn.disabled = true; scoreBox.textContent="";
+  window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+}
+
+/* Render topics list */
+function renderTopics(){
+  const unlocks = getUnlocks();
+  const subUnlocks = unlocks[currentSubjectKey] || {};
+  const sub = curriculum[currentSubjectKey];
+  topicList.innerHTML = "";
+  sub.topics.forEach(tp=>{
+    const unlocked = tp.free || !!subUnlocks[tp.id];
+    const row = document.createElement("div");
+    row.className = "topic" + (unlocked ? "" : " locked");
+    const priceTag = unlocked ? "" : `<span class="tag">$${tp.price.toFixed(2)}</span>`;
+    row.innerHTML = `
+      <div>
+        <div style="font-weight:700">${tp.title} ${tp.free?'<span class="tag">Free</span>':'<span class="tag">Premium 🔒</span>'}</div>
+        <div class="muted">${tp.blurb}</div>
+      </div>
+      <div>${priceTag}</div>
+      <div>
+        ${unlocked
+          ? `<button class="btn primary" data-open="${tp.id}">Open</button>`
+          : `<button class="btn" data-pay="${tp.id}">Unlock</button>`}
+      </div>
+    `;
+    topicList.appendChild(row);
+  });
+
+  topicList.querySelectorAll("[data-open]").forEach(b=>b.onclick = () => openTopic(b.dataset.open));
+  topicList.querySelectorAll("[data-pay]").forEach(b=>b.onclick = () => beginPayment(b.dataset.pay));
+}
+
+/* Open topic: show notes & quiz */
+function openTopic(topicId){
+  const sub = curriculum[currentSubjectKey];
+  const tp = sub.topics.find(x=>x.id===topicId);
+  currentTopic = tp;
+  topicHeading.textContent = `${sub.name} • ${tp.title}`;
+  lesson.innerHTML = topicNotes(currentSubjectKey, tp);
+  renderQuiz(tp.quiz);
+}
+
+/* Simple topic notes (could be replaced by real content files) */
+function topicNotes(subjectKey, tp){
+  const tips = {
+    maths: "Show your working. Use units and check reasonableness of answers.",
+    physics: "Sketch diagrams, list givens, choose equations before plugging values.",
+    chemistry: "Balance equations and track units (mol, dm³, g).",
+    biology: "Define terms precisely and label diagrams neatly."
+  }[subjectKey] || "";
+  return `
+    <h3>Key Ideas</h3>
+    <ul style="margin:8px 0 10px 18px">
+      ${tp.blurb.split(".").filter(Boolean).map(s=>`<li>${s.trim()}.</li>`).join("")}
+    </ul>
+    <div class="tag">Study Tip</div>
+    <p class="muted" style="margin-top:6px">${tips}</p>
+  `;
+}
+
+/* --------- Quiz engine --------- */
+function sampleQuiz(id){
+  // small banks per topic id
+  const bank = {
+    algebra: [
+      q("Solve: 3x + 5 = 20", ["x=3","x=5","x=15","x=20"], 0),
+      q("Gradient of y = 2x - 7", ["-7","2","7","-2"], 1),
+    ],
+    functions: [
+      q("Range of f(x)=x² for real x", ["(-∞,∞)","[0,∞)","(0,∞)","[-∞,0]"], 1),
+      q("y= (x-2)² moves the graph of x²", ["Left 2","Right 2","Up 2","Down 2"], 1),
+    ],
+    trig: [
+      q("sin²θ + cos²θ =", ["0","1","sinθ","cosθ"], 1),
+      q("tanθ =", ["sinθ/cosθ","cosθ/sinθ","1/sinθ","1/cosθ"], 0),
+    ],
+    calculus: [
+      q("d/dx (x²) =", ["2x","x","x³","2"], 0),
+      q("If dy/dx=0 at a point, it may be a…", ["min/max","asymptote","undefined","translation"], 0),
+    ],
+    stats: [
+      q("Median is the…", ["Average","Middle value","Most frequent","Range"], 1),
+      q("Probability values lie in…", ["(-1,1)","[0,1]","[1,∞)","(-∞,∞)"], 1),
+    ],
+    vectors: [
+      q("|i + j| =", ["1","2","√2","0"], 2),
+      q("Unit vector of 2i is…", ["i","2i","-i","0"], 0),
+    ],
+    mechanics: [
+      q("Unit of force", ["J","W","N","Pa"], 2),
+      q("Momentum p =", ["mv","ma","m/g","v/m"], 0),
+    ],
+    waves: [
+      q("v = fλ; if f doubles and v constant, λ …", ["doubles","halves","same","zero"], 1),
+      q("Echo involves…", ["refraction","reflection","diffraction","interference"], 1),
+    ],
+    electricity: [
+      q("Ohm’s law:", ["V=IR","P=IV","Q=It","E=Pt"], 0),
+      q("In series circuits, current is…", ["same","adds","zero","divides"], 0),
+    ],
+    fields: [
+      q("Gravitational force is always…", ["repulsive","attractive","zero","perpendicular"], 1),
+      q("Coulomb’s law varies as…", ["r","1/r","1/r²","r²"], 2),
+    ],
+    thermal: [
+      q("Temperature unit SI", ["°C","K","°F","J"], 1),
+      q("Q=mcΔT, c is…", ["capacity","cond.","specific heat","current"], 2),
+    ],
+    atomic: [
+      q("Isotopes have same…", ["neutrons","mass no.","protons","electrons only"], 2),
+      q("Across a period, atomic radius…", ["increases","decreases","same","random"], 1),
+    ],
+    stoich: [
+      q("1 mole contains…", ["6.02×10²³","1g","1L","1 atm"], 0),
+      q("Limiting reagent determines…", ["yield","pressure","molarity","color"], 0),
+    ],
+    bonding: [
+      q("NaCl is…", ["covalent","ionic","metallic","hydrogen"], 1),
+      q("Strongest IMF below:", ["H-bond","London","Dipole","Ionic lattice"], 0),
+    ],
+    acids: [
+      q("pH<7 indicates…", ["acid","base","neutral","buffer"], 0),
+      q("Salt forms from…", ["acid+metal","acid+base","base+oxide","all"], 3),
+    ],
+    organic: [
+      q("Alkanes general formula:", ["CnH2n","CnH2n+2","CnH2n-2","CnH2n+1"], 1),
+      q("Isomers have same…", ["formula","structure","boiling point","reactivity"], 0),
+    ],
+    cells: [
+      q("Powerhouse of cell:", ["Ribosome","Mitochondrion","Nucleus","Chloroplast"], 1),
+      q("Osmosis is movement of…", ["solvent","solute","gas","protein"], 0),
+    ],
+    genetics: [
+      q("DNA stands for:", ["Deoxy… Acid","Dioxy… Acid","Deoxy… Base","None"], 0),
+      q("Monohybrid ratio (F2):", ["3:1","1:1","9:3:3:1","2:1"], 0),
+    ],
+    systems: [
+      q("Heart pumps blood via…", ["arteries","veins","capillaries","all"], 3),
+      q("Gas exchange occurs in…", ["bronchi","alveoli","trachea","larynx"], 1),
+    ],
+    ecology: [
+      q("Producer example:", ["Lion","Grass","Mushroom","Human"], 1),
+      q("Energy transfer between levels is about…", ["10%","50%","100%","1%"], 0),
+    ],
+    evolution: [
+      q("Natural selection acts on…", ["populations","genes only","individuals","ecosystems"], 2),
+      q("Fossils provide…", ["no info","direct evidence","only DNA","only bones"], 1),
+    ],
+  };
+  return bank[id] || [ q("This is a sample question?", ["A","B","C","D"], 0) ];
+}
+function q(text, options, answerIndex){ return {text, options, answerIndex}; }
+
+function renderQuiz(quiz){
+  quizBox.innerHTML = "";
+  currentSelections = {};
+  quiz.forEach((item, idx)=>{
+    const qDiv = document.createElement("div");
+    qDiv.className = "q";
+    qDiv.innerHTML = `<div><b>Q${idx+1}.</b> ${item.text}</div>`;
+    item.options.forEach((opt, oi)=>{
+      const o = document.createElement("div");
+      o.className = "opt";
+      o.textContent = opt;
+      o.onclick = ()=> {
+        // mark selection
+        Array.from(qDiv.querySelectorAll(".opt")).forEach(e=>e.classList.remove("selected"));
+        o.classList.add("selected");
+        currentSelections[idx] = oi;
+        submitQuizBtn.disabled = Object.keys(currentSelections).length !== quiz.length ? true : false;
+      };
+      qDiv.appendChild(o);
+    });
+    quizBox.appendChild(qDiv);
+  });
+  submitQuizBtn.disabled = true;
+  retryQuizBtn.disabled = true;
+  scoreBox.textContent = "";
+}
+
+submitQuizBtn.onclick = ()=>{
+  const quiz = currentTopic.quiz;
+  let score = 0;
+  [...quizBox.querySelectorAll(".q")].forEach((qDiv, i)=>{
+    const ans = quiz[i].answerIndex;
+    const opts = qDiv.querySelectorAll(".opt");
+    opts.forEach((o, idx)=>{
+      o.classList.remove("correct","wrong");
+      if(idx===ans) o.classList.add("correct");
+      if(currentSelections[i]===idx && idx!==ans) o.classList.add("wrong");
+    });
+    if(currentSelections[i]===ans) score++;
+  });
+  const out = `Score: ${score}/${quiz.length}`;
+  scoreBox.textContent = out;
+
+  // Save best score
+  const all = getScores();
+  const key = `${currentSubjectKey}:${currentTopic.id}`;
+  const prev = all[key] || 0;
+  if(score > prev){ all[key] = score; setScores(all); }
+
+  retryQuizBtn.disabled = false;
+};
+retryQuizBtn.onclick = ()=> renderQuiz(currentTopic.quiz);
+
+/* --------- Payment (Demo) --------- */
+const payModal = document.getElementById("payModal");
+const paymentTopicLine = document.getElementById("paymentTopicLine");
+const priceTag = document.getElementById("priceTag");
+const confirmPay = document.getElementById("confirmPay");
+const cancelPay = document.getElementById("cancelPay");
+let pendingUnlock = null;
+
+function beginPayment(topicId){
+  const sub = curriculum[currentSubjectKey];
+  const tp = sub.topics.find(x=>x.id===topicId);
+  pendingUnlock = { subject: currentSubjectKey, topicId: tp.id, price: tp.price };
+  paymentTopicLine.textContent = `You are unlocking: ${sub.name} • ${tp.title}`;
+  priceTag.textContent = `$${tp.price.toFixed(2)}`;
+  payModal.classList.add("active");
+  payModal.setAttribute("aria-hidden","false");
+}
+cancelPay.onclick = ()=>{ payModal.classList.remove("active"); payModal.setAttribute("aria-hidden","true"); pendingUnlock=null; };
+confirmPay.onclick = ()=>{
+  if(!pendingUnlock) return;
+  const all = getUnlocks();
+  all[pendingUnlock.subject] = all[pendingUnlock.subject] || {};
+  all[pendingUnlock.subject][pendingUnlock.topicId] = true;
+  setUnlocks(all);
+  payModal.classList.remove("active");
+  pendingUnlock=null;
+  renderTopics();
+};
+
+/* --------- Theme Toggle --------- */
+const themeToggle = document.getElementById("themeToggle");
+const themeIcon = document.getElementById("themeIcon");
+const LS_THEME = "shs_theme_v1";
+
+function initTheme() {
+  const savedTheme = localStorage.getItem(LS_THEME) || "dark";
+  setTheme(savedTheme);
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  themeIcon.textContent = theme === "dark" ? "🌙" : "☀️";
+  localStorage.setItem(LS_THEME, theme);
+}
+
+themeToggle.addEventListener("click", () => {
+  const currentTheme = document.documentElement.getAttribute("data-theme");
+  const newTheme = currentTheme === "dark" ? "light" : "dark";
+  setTheme(newTheme);
+  showNotification(`Switched to ${newTheme} mode`, "info");
+});
+
+/* --------- Notifications --------- */
+function showNotification(message, type = "info", duration = 3000) {
+  const container = document.getElementById("notificationContainer");
+  const notification = document.createElement("div");
+  notification.className = `notification ${type}`;
+  notification.textContent = message;
+  container.appendChild(notification);
+  
+  setTimeout(() => notification.classList.add("show"), 100);
+  setTimeout(() => {
+    notification.classList.remove("show");
+    setTimeout(() => container.removeChild(notification), 300);
+  }, duration);
+}
+
+/* --------- Search Functionality --------- */
+const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
+let searchTimeout;
+
+searchInput.addEventListener("input", (e) => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    const query = e.target.value.toLowerCase().trim();
+    if (query.length < 2) {
+      searchResults.style.display = "none";
+      return;
+    }
+    performSearch(query);
+  }, 300);
+});
+
+function performSearch(query) {
+  if (!currentSubjectKey) return;
+  
+  const subject = curriculum[currentSubjectKey];
+  const results = subject.topics.filter(topic => 
+    topic.title.toLowerCase().includes(query) || 
+    topic.blurb.toLowerCase().includes(query)
+  );
+  
+  if (results.length === 0) {
+    searchResults.innerHTML = '<div class="search-item">No topics found</div>';
+  } else {
+    searchResults.innerHTML = results.map(topic => 
+      `<div class="search-item" data-topic-id="${topic.id}">
+        <div style="font-weight: 600">${topic.title}</div>
+        <div class="muted" style="font-size: 12px">${topic.blurb}</div>
+      </div>`
+    ).join("");
+    
+    searchResults.querySelectorAll(".search-item[data-topic-id]").forEach(item => {
+      item.addEventListener("click", () => {
+        const topicId = item.dataset.topicId;
+        const unlocks = getUnlocks();
+        const subUnlocks = unlocks[currentSubjectKey] || {};
+        const topic = subject.topics.find(t => t.id === topicId);
+        
+        if (topic.free || subUnlocks[topicId]) {
+          openTopic(topicId);
+          searchInput.value = "";
+          searchResults.style.display = "none";
+        } else {
+          beginPayment(topicId);
+        }
+      });
+    });
+  }
+  
+  searchResults.style.display = "block";
+}
+
+// Hide search results when clicking outside
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".search-container")) {
+    searchResults.style.display = "none";
+  }
+});
+
+/* --------- Progress Tracking --------- */
+const LS_PROGRESS = "shs_progress_v1";
+const getProgress = () => JSON.parse(localStorage.getItem(LS_PROGRESS) || "{}");
+const setProgress = (obj) => localStorage.setItem(LS_PROGRESS, JSON.stringify(obj));
+
+function updateSubjectProgress() {
+  if (!currentSubjectKey) return;
+  
+  const progress = getProgress();
+  const subjectProgress = progress[currentSubjectKey] || {};
+  const subject = curriculum[currentSubjectKey];
+  
+  const totalTopics = subject.topics.length;
+  const completedTopics = Object.keys(subjectProgress).length;
+  const percentage = Math.round((completedTopics / totalTopics) * 100);
+  
+  const progressBar = document.getElementById("subjectProgress");
+  const progressText = document.getElementById("progressText");
+  
+  progressBar.style.width = `${percentage}%`;
+  progressText.textContent = `${percentage}% Complete (${completedTopics}/${totalTopics} topics)`;
+}
+
+function markTopicCompleted(topicId) {
+  const progress = getProgress();
+  if (!progress[currentSubjectKey]) progress[currentSubjectKey] = {};
+  progress[currentSubjectKey][topicId] = Date.now();
+  setProgress(progress);
+  updateSubjectProgress();
+}
+
+/* --------- Enhanced Quiz System --------- */
+const showHintsBtn = document.getElementById("showHints");
+const quizExplanations = document.getElementById("quizExplanations");
+
+function addQuizExplanations(quiz) {
+  const explanations = {
+    algebra: [
+      "To solve 3x + 5 = 20, subtract 5 from both sides: 3x = 15, then divide by 3: x = 5",
+      "The gradient (slope) of y = 2x - 7 is the coefficient of x, which is 2"
+    ],
+    functions: [
+      "For f(x) = x², since x² is always non-negative, the range is [0, ∞)",
+      "The transformation (x-2)² shifts the graph of x² to the right by 2 units"
+    ],
+    // Add more explanations as needed
+  };
+  
+  return explanations[currentTopic?.id] || [];
+}
+
+showHintsBtn.addEventListener("click", () => {
+  if (!currentTopic) return;
+  
+  const explanations = addQuizExplanations(currentTopic.quiz);
+  if (explanations.length > 0) {
+    quizExplanations.innerHTML = `
+      <h4>Hints & Explanations</h4>
+      ${explanations.map((exp, i) => `<p><strong>Q${i+1}:</strong> ${exp}</p>`).join("")}
+    `;
+    quizExplanations.style.display = "block";
+    showHintsBtn.style.display = "none";
+  }
+});
+
+/* --------- Enhanced Quiz Submission --------- */
+const originalSubmitQuiz = submitQuizBtn.onclick;
+submitQuizBtn.onclick = () => {
+  if (originalSubmitQuiz) originalSubmitQuiz();
+  
+  // Mark topic as completed if score is good
+  const scoreText = scoreBox.textContent;
+  const scoreMatch = scoreText.match(/(\d+)\/(\d+)/);
+  if (scoreMatch) {
+    const score = parseInt(scoreMatch[1]);
+    const total = parseInt(scoreMatch[2]);
+    const percentage = (score / total) * 100;
+    
+    if (percentage >= 70) {
+      markTopicCompleted(currentTopic.id);
+      showNotification(`Great job! You completed ${currentTopic.title}`, "success");
+    }
+  }
+  
+  // Show hints button
+  showHintsBtn.style.display = "inline-block";
+  quizExplanations.style.display = "none";
+};
+
+/* --------- Enhanced Topic Opening --------- */
+const originalOpenTopic = openTopic;
+function openTopic(topicId) {
+  originalOpenTopic(topicId);
+  updateSubjectProgress();
+  showHintsBtn.style.display = "none";
+  quizExplanations.style.display = "none";
+}
+
+/* --------- Enhanced Subject Opening --------- */
+const originalOpenSubject = openSubject;
+function openSubject(key) {
+  originalOpenSubject(key);
+  updateSubjectProgress();
+  searchInput.value = "";
+  searchResults.style.display = "none";
+}
+
+/* --------- Keyboard Navigation --------- */
+document.addEventListener("keydown", (e) => {
+  // ESC to close modals
+  if (e.key === "Escape") {
+    const activeModal = document.querySelector(".modal.active");
+    if (activeModal) {
+      activeModal.classList.remove("active");
+      activeModal.setAttribute("aria-hidden", "true");
+    }
+    searchResults.style.display = "none";
+  }
+  
+  // Ctrl/Cmd + K to focus search
+  if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+    e.preventDefault();
+    if (currentSubjectKey) {
+      searchInput.focus();
+    }
+  }
+});
+
+/* --------- Misc init --------- */
+function init(){
+  // clicking subject cards
+  // (already attached)
+  updateFace();
+  initTheme();
+  // default: nothing else
+}
+init();
+</script>
+</body>
+</html>

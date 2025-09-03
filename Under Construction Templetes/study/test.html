@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SHS Learn — Test</title>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;background:#0b1220;color:#e8f1ff;padding:20px}
+  .card{background:#121a2d;padding:16px;border-radius:12px;margin:12px 0;box-shadow:0 8px 20px rgba(0,0,0,.4)}
+  .grid{display:flex;gap:12px;flex-wrap:wrap}
+  .sub{flex:1 1 200px;padding:12px;border-radius:10px}
+  .math{background:linear-gradient(135deg,#f7971e,#ffd200)}
+  .btn{padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+  .primary{background:#56ccf2;color:#042b38}
+  #timerFace{font-size:26px;padding:12px;background:#0f1729;border-radius:10px;display:inline-block}
+</style>
+</head>
+<body>
+  <h1>SHS Learn — Quick Test</h1>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <strong>Subjects</strong>
+        <div class="grid">
+          <div class="sub math"><strong>Mathematics</strong><div><button class="btn primary" data-sub="maths">Enter →</button></div></div>
+          <div class="sub" style="background:linear-gradient(135deg,#1e3c72,#2a5298)"><strong>Physics</strong><div><button class="btn primary" data-sub="physics">Enter →</button></div></div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <div id="timerFace">00:10</div>
+        <div style="margin-top:8px">
+          <input id="m" type="number" value="0" style="width:50px"/> :
+          <input id="s" type="number" value="10" style="width:50px"/>
+        </div>
+        <div style="margin-top:8px">
+          <button class="btn primary" id="start">Start</button>
+          <button class="btn" id="pause">Pause</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel" class="card" style="display:none">
+    <h3 id="subjectTitle">Subject</h3>
+    <div id="topicList"></div>
+    <div id="lesson"></div>
+  </div>
+
+<script>
+  // minimal data
+  const data = {
+    maths: {name:'Mathematics', topics:[
+      {id:'alg',title:'Algebra (Free)',free:true,blurb:'Linear eqns'},
+      {id:'calc',title:'Calculus (Premium)',free:false,blurb:'Intro to differentiation',price:3}
+    ]},
+    physics: {name:'Physics', topics:[
+      {id:'mech',title:'Mechanics (Free)',free:true,blurb:'Motion, forces'}
+    ]}
+  };
+
+  // subject buttons
+  document.querySelectorAll('[data-sub]').forEach(b=>{
+    b.onclick = ()=>{
+      const key = b.dataset.sub;
+      openSubject(key);
+    };
+  });
+
+  function openSubject(key){
+    const s = data[key];
+    document.getElementById('panel').style.display='block';
+    document.getElementById('subjectTitle').textContent = s.name;
+    const list = document.getElementById('topicList');
+    list.innerHTML = '';
+    s.topics.forEach(t=>{
+      const div = document.createElement('div');
+      div.style.padding='8px';
+      div.style.borderTop='1px solid rgba(255,255,255,.04)';
+      div.innerHTML = `<strong>${t.title}</strong> <div style="color:#9fb3c8">${t.blurb}</div>`;
+      const btn = document.createElement('button');
+      btn.className='btn';
+      btn.textContent = t.free? 'Open' : `Unlock $${t.price}`;
+      btn.style.marginTop='6px';
+      btn.onclick = ()=> alert('You clicked: '+t.title);
+      div.appendChild(btn);
+      list.appendChild(div);
+    });
+  }
+
+  // timer
+  let running=false, rem=10, interval=null;
+  const face=document.getElementById('timerFace');
+  function upd(){ face.textContent = String(Math.floor(rem/60)).padStart(2,'0')+':'+String(rem%60).padStart(2,'0'); }
+  document.getElementById('start').onclick = ()=>{
+    rem = parseInt(document.getElementById('m').value||0)*60 + parseInt(document.getElementById('s').value||0);
+    if(rem<=0) return alert('Set a positive time');
+    if(running) return;
+    running=true;
+    upd();
+    interval = setInterval(()=>{ rem--; upd(); if(rem<=0){ clearInterval(interval); running=false; alarm(); } },1000);
+  };
+  document.getElementById('pause').onclick = ()=>{ clearInterval(interval); running=false; };
+
+  function alarm(){
+    face.style.border='3px solid #ffcb2e';
+    try{
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.frequency.value = 880; g.gain.value=0.5;
+      o.connect(g); g.connect(ctx.destination); o.start(); setTimeout(()=>{ o.stop(); },900);
+    }catch(e){ console.log('Audio blocked until user interaction'); }
+    alert('Time is up!');
+  }
+</script>
+</body>
+</html>
